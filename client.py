@@ -9,10 +9,15 @@ def rsa_decrypt(server):
     anahtar_cifti = RSA.generate(2048)
     public_key = anahtar_cifti.publickey()
     private_key = anahtar_cifti
-    server.sendall(public_key)
-    key=server.recv(2048)
+    server.sendall(public_key.export_key(format='PEM'))
+    sifreli_key = bytearray()
+    while len(sifreli_key) < 256:
+        parca = server.recv(256 - len(sifreli_key))
+        if not parca:
+            raise ConnectionError("Sunucu bağlantısı koptu.")
+        sifreli_key.extend(parca)
     cipher_dec = PKCS1_OAEP.new(private_key)
-    return cipher_dec.decrypt(key)
+    return cipher_dec.decrypt(bytes(sifreli_key))
 def geri():
     try:
         os.chdir("..")
