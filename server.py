@@ -11,10 +11,11 @@ class hafız_shell():
         self.id = 1
         self.clients = {}
         self.key=b""
-    def rsa_encrpt(self,client,key):
-        sifreli=client.recv(2048)
-        cipher=PKCS1_OAEP.new(sifreli)
-        sifreli_key=cipher.encrypt(key)
+    def rsa_encrpt(self, client, key):
+        raw_public_key = client.recv(2048)
+        public_key = RSA.import_key(raw_public_key)
+        cipher = PKCS1_OAEP.new(public_key)
+        sifreli_key = cipher.encrypt(key)
         client.sendall(sifreli_key)
         
     def baglantı_bekle(self, ip, port):
