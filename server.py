@@ -11,7 +11,7 @@ class hafız_shell():
         self.id = 1
         self.clients = {}
         self.key=b""
-    def rsa_encrpt(client,key):
+    def rsa_encrpt(self,client,key):
         sifreli=client.recv(2048)
         cipher=PKCS1_OAEP.new(sifreli)
         sifreli_key=cipher.encrypt(key)
